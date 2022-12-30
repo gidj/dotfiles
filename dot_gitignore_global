@@ -1,0 +1,21 @@
+.env.zsh
+.out.zsh
+.envrc
+node_modules
+rebel.xml
+.vim
+.venv
+pyproject.toml
+poetry.lock
+ignore
+.terraform.lock.hcl
+.tool-versions
+
+# Amazon 
+build
+tst/*/generated-op-config
+# Bemol
+.classpath
+.factorypath
+.project
+.settings
