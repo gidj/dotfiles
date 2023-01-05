@@ -9,6 +9,11 @@ lsp.ensure_installed({
     'tsserver',
 })
 
+local has_words_before = function()
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
 -- lsp.preset('recommended')
 -- lsp.preset('lsp-compe')
 lsp.preset('lsp-only')
@@ -24,7 +29,7 @@ local cmp = require('cmp')
 local lspkind = require 'lspkind'
 local config = lsp.defaults.cmp_mappings
 
-local select_opts = {behavior = cmp.SelectBehavior.Select}
+local select_opts = { behavior = cmp.SelectBehavior.Select }
 local luasnip = require("luasnip")
 local cmp_config = lsp.defaults.cmp_config({
     formatting = {
@@ -38,7 +43,35 @@ local cmp_config = lsp.defaults.cmp_config({
             return kind
         end
     },
-    mapping = lsp.defaults.cmp_mappings(),
+    mapping = lsp.defaults.cmp_mappings({
+        ["<C-j>"] = cmp.mapping(function(fallback)
+            if luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { "i", "s" }),
+        ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            elseif has_words_before() then
+                cmp.complete()
+            else
+                fallback()
+            end
+        end, { "i", "s" }),
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { "i", "s" })
+    }),
     sorting = {
         comparators = {
             cmp.config.compare.locality,
@@ -49,9 +82,17 @@ local cmp_config = lsp.defaults.cmp_config({
         }
     },
     sources = {
-        { name = 'luasnip', options = { use_show_condition = false } },
+        { name = 'luasnip',
+            options = { use_show_condition = false }
+        },
         { name = 'nvim_lsp' },
-        { name = 'buffer' },
+        { name = 'buffer',
+            options = {
+                get_bufnrs = function()
+                    return vim.api.nvim_list_bufs()
+                end
+            }
+        },
         { name = 'norg' },
         { name = 'path' },
         { name = 'nvim_lsp_signature_help' },

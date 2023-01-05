@@ -29,6 +29,9 @@ require('packer').startup(function()
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
+
+            -- Java
+            -- { 'mfussenegger/nvim-jdtls' },
         },
         config = function()
             require('config/zero')
@@ -53,6 +56,17 @@ require('packer').startup(function()
     }
     use 'nvim-lua/popup.nvim'
     use 'justinmk/vim-dirvish'
+    use {
+        "folke/trouble.nvim",
+        requires = "kyazdani42/nvim-web-devicons",
+        config = function()
+            require("trouble").setup {
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
+            }
+        end
+    }
     use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } }
     use {
         'jose-elias-alvarez/null-ls.nvim',
