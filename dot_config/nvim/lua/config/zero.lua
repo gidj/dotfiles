@@ -1,5 +1,6 @@
 local lsp = require('lsp-zero')
 local luasnip = require('luasnip')
+
 lsp.ensure_installed({
     'gopls',
     'jdtls',
@@ -23,14 +24,16 @@ vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
 lsp.nvim_workspace({
     library = vim.api.nvim_get_runtime_file('', true)
 })
+
+-- local config = lsp.defaults.cmp_mappings
+lsp.skip_server_setup({"jdtls"})
+
 lsp.setup()
 
 local cmp = require('cmp')
 local lspkind = require 'lspkind'
-local config = lsp.defaults.cmp_mappings
 
-local select_opts = { behavior = cmp.SelectBehavior.Select }
-local luasnip = require("luasnip")
+-- local select_opts = { behavior = cmp.SelectBehavior.Select }
 local cmp_config = lsp.defaults.cmp_config({
     formatting = {
         fields = { "kind", "abbr", "menu" },
@@ -86,6 +89,7 @@ local cmp_config = lsp.defaults.cmp_config({
             options = { use_show_condition = false }
         },
         { name = 'nvim_lsp' },
+        { name = 'nvim_lsp_signature_help' },
         { name = 'buffer',
             options = {
                 get_bufnrs = function()
@@ -93,9 +97,7 @@ local cmp_config = lsp.defaults.cmp_config({
                 end
             }
         },
-        { name = 'norg' },
         { name = 'path' },
-        { name = 'nvim_lsp_signature_help' },
     },
     view = { entries = { name = "custom", selection_order = "near_cursor" } },
     window = {

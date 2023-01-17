@@ -31,7 +31,7 @@ require('packer').startup(function()
             { 'rafamadriz/friendly-snippets' },
 
             -- Java
-            -- { 'mfussenegger/nvim-jdtls' },
+            { 'mfussenegger/nvim-jdtls' },
         },
         config = function()
             require('config/zero')
