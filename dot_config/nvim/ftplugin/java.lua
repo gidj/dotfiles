@@ -48,5 +48,8 @@ local java_config = function()
     }
 end
 
+local jdtls_setup = require("jdtls.setup")
+jdtls_setup.add_commands()
+
 local jdtls = require("jdtls")
 jdtls.start_or_attach(java_config())

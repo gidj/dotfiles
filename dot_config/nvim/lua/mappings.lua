@@ -29,6 +29,7 @@ map("v", ".", ":norm.<CR>")
 -- " Preserve indentation while pasting text from the OS X clipboard
 map("n", "<leader>p", ":set paste<CR>:put  *<CR>:set nopaste<CR>")
 
+map('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>')
 map('n', '<leader>f', '<cmd>lua vim.lsp.buf.format {async = true}<CR>')
 -- " Tab goes switches between matched surrounding tokens
 map("n", "<tab>", "%")
@@ -37,13 +38,14 @@ map("v", "<tab>", "%")
 -- " Clear search
 map("n", "<leader>,", ":noh<cr>")
 
+-- Telescope stuff
 map("n", ";f", "<cmd>Telescope find_files<cr>", { silent = true })
 map("n", "//", "<cmd>Telescope git_files<cr>", { silent = true })
 map("n", ",gr", "<cmd>Telescope lsp_references<cr>", { silent = true })
 map("n", ";r", "<cmd>Telescope live_grep<cr>", { silent = true })
 map("n", "\\\\", "<cmd>Telescope buffers<cr>", { silent = true })
 map("n", ";;", "<cmd>Telescope help_tags<cr>", { silent = true })
---
+
 -- Show diagnostics in a floating window
 map('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
 

@@ -6,6 +6,7 @@ require('packer').startup(function()
     use 'nvim-treesitter/nvim-treesitter-refactor'
     use 'nvim-lua/plenary.nvim'
     use 'nvim-telescope/telescope.nvim'
+    use 'nvim-telescope/telescope-ui-select.nvim'
     use {
         'VonHeikemen/lsp-zero.nvim',
         requires = {
