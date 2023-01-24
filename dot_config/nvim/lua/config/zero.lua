@@ -9,6 +9,7 @@ lsp.ensure_installed({
     'sumneko_lua',
     'tsserver',
 })
+-- lsp.extend_lspconfig()
 
 local has_words_before = function()
     local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -26,9 +27,13 @@ lsp.nvim_workspace({
 })
 
 -- local config = lsp.defaults.cmp_mappings
-lsp.skip_server_setup({"jdtls"})
+lsp.skip_server_setup({ "jdtls" })
 
 lsp.setup()
+
+--[[ vim.diagnostic.config({
+    virtual_text = true,
+}) ]]
 
 local cmp = require('cmp')
 local lspkind = require 'lspkind'

@@ -1,6 +1,11 @@
 local augroup = vim.api.nvim_create_augroup -- Create/get autocommand group
 local autocmd = vim.api.nvim_create_autocmd -- Create autocommand
 
+autocmd("Filetype", { pattern = "java", callback = function()
+    require("config/java")
+end
+})
+
 -- " autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 -- " Javascript, JSX
 --[[ -- " Markdown
@@ -47,5 +52,6 @@ local autocmd = vim.api.nvim_create_autocmd -- Create autocommand
     command = "setlocal ts=2 sts=2 sw=2 et" }) ]]
 
 augroup("packerUseConfig", { clear = true })
-autocmd('BufWritePost', { group = "packerUseConfig", pattern = "plugins.lua", command = "source <afile> | PackerCompile" })
+autocmd('BufWritePost',
+    { group = "packerUseConfig", pattern = "plugins.lua", command = "source <afile> | PackerCompile" })
 autocmd('BufReadPost,BufNewFile', { pattern = { "Config" }, command = "setf brazil-config" })

@@ -16,8 +16,16 @@ telescope.setup {
             require('telescope.themes').get_dropdown {
 
             }
+        },
+        undo = {
+            side_by_side = true,
+            layout_strategy = "vertical",
+            layout_config = {
+                preview_height = 0.8,
+            }
         }
     }
 }
 
 telescope.load_extension('ui-select')
+telescope.load_extension('undo')
