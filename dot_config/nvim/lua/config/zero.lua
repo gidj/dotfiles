@@ -9,36 +9,25 @@ lsp.ensure_installed({
     'sumneko_lua',
     'tsserver',
 })
--- lsp.extend_lspconfig()
+
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
+
+lsp.preset('lsp-only')
+lsp.skip_server_setup({ "jdtls" })
+lsp.nvim_workspace({
+    library = vim.api.nvim_get_runtime_file('', true)
+})
+
+lsp.setup()
+
+local cmp = require('cmp')
+local lspkind = require 'lspkind'
 
 local has_words_before = function()
     local line, col = unpack(vim.api.nvim_win_get_cursor(0))
     return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
--- lsp.preset('recommended')
--- lsp.preset('lsp-compe')
-lsp.preset('lsp-only')
-
-vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
-
-lsp.nvim_workspace({
-    library = vim.api.nvim_get_runtime_file('', true)
-})
-
--- local config = lsp.defaults.cmp_mappings
-lsp.skip_server_setup({ "jdtls" })
-
-lsp.setup()
-
---[[ vim.diagnostic.config({
-    virtual_text = true,
-}) ]]
-
-local cmp = require('cmp')
-local lspkind = require 'lspkind'
-
--- local select_opts = { behavior = cmp.SelectBehavior.Select }
 local cmp_config = lsp.defaults.cmp_config({
     formatting = {
         fields = { "kind", "abbr", "menu" },
@@ -47,7 +36,6 @@ local cmp_config = lsp.defaults.cmp_config({
             local strings = vim.split(kind.kind, "%s", { trimempty = true })
             kind.kind = " " .. strings[1] .. " "
             kind.menu = "    (" .. strings[2] .. ")"
-
             return kind
         end
     },
@@ -108,8 +96,8 @@ local cmp_config = lsp.defaults.cmp_config({
     window = {
         completion = {
             winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,Search:None",
-            -- col_offset = -3,
-            -- side_padding = 0
+            col_offset = -3,
+            side_padding = 0
         }
     },
     --[[ window = {
