@@ -4,7 +4,7 @@ require('packer').startup(function()
     use 'wbthomason/packer.nvim'
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
     use 'nvim-treesitter/nvim-treesitter-refactor'
-    use 'mrjones2014/nvim-ts-rainbow'
+    -- use 'mrjones2014/nvim-ts-rainbow'
     use 'nvim-lua/plenary.nvim'
     use 'nvim-telescope/telescope.nvim'
     use 'nvim-telescope/telescope-ui-select.nvim'
