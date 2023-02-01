@@ -14,6 +14,12 @@ vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
 
 lsp.preset('lsp-only')
 lsp.skip_server_setup({ "jdtls" })
+--[[ lsp.configure("jdtls", {
+    on_attach = function(client, bufr)
+        require('config/jdtls_setup').start_or_attach()
+    end
+}) ]]
+
 lsp.nvim_workspace({
     library = vim.api.nvim_get_runtime_file('', true)
 })

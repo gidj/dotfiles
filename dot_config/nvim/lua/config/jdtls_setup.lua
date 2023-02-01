@@ -45,11 +45,12 @@ local on_attach = function(client, bufnr)
     nnoremap('<space>f', function() vim.lsp.buf.format { async = true } end, bufopts, "Format file")
 
     -- Java extensions provided by jdtls
-    nnoremap("<C-o>", jdtls.organize_imports, bufopts, "Organize imports")
+    -- nnoremap("<C-o>", jdtls.organize_imports, bufopts, "Organize imports")
     nnoremap("<space>ev", jdtls.extract_variable, bufopts, "Extract variable")
     nnoremap("<space>ec", jdtls.extract_constant, bufopts, "Extract constant")
     vim.keymap.set('v', "<space>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
         { noremap = true, silent = true, buffer = bufnr, desc = "Extract method" })
+
     jdtls_setup.add_commands()
 
     local buf_command = vim.api.nvim_buf_create_user_command
@@ -133,17 +134,17 @@ local config = {
             configuration = {
                 runtimes = {
                     {
+                        name = "JavaSE-1.8",
+                        path = home .. "/.asdf/installs/java/corretto-8.352.08.1"
+                    },
+                    {
                         name = "JavaSE-17",
                         path = home .. "/.asdf/installs/java/openjdk-17.0.2",
                     },
-                    --[[ {
-            name = "JavaSE-11",
-            path = home .. "/.asdf/installs/java/corretto-11.0.16.9.1",
-          },
-          {
-            name = "JavaSE-1.8",
-            path = home .. "/.asdf/installs/java/corretto-8.352.08.1"
-          }, ]]
+                    {
+                        name = "JavaSE-19",
+                        path = home .. "/.asdf/installs/java/openjdk-19.0.2",
+                    },
                 }
             }
         }
@@ -154,8 +155,8 @@ local config = {
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     -- for the full list of options
     cmd = {
-        -- home .. "/.asdf/installs/java/openjdk-17.0.2/bin/java",
-        "java",
+        home .. "/.asdf/installs/java/openjdk-19.0.2/bin/java",
+        -- "java",
         '-Declipse.application=org.eclipse.jdt.ls.core.id1',
         '-Dosgi.bundles.defaultStartLevel=4',
         '-Declipse.product=org.eclipse.jdt.ls.core.product',
@@ -166,7 +167,7 @@ local config = {
         '--add-opens', 'java.base/java.util=ALL-UNNAMED',
         '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
         -- If you use lombok, download the lombok jar and place it in ~/.local/share/eclipse
-        -- '-javaagent:' .. home .. '/.local/share/eclipse/lombok.jar',
+        '-javaagent:' .. home .. '/.local/share/eclipse/lombok.jar',
 
         -- The jar file is located where jdtls was installed. This will need to be updated
         -- to the location where you installed jdtls
@@ -183,4 +184,12 @@ local config = {
 
 -- Finally, start jdtls. This will run the language server using the configuration we specified,
 -- setup the keymappings, and attach the LSP client to the current buffer
-jdtls.start_or_attach(config)
+-- jdtls.start_or_attach(config)
+
+local M = {}
+
+M.start_or_attach = function()
+    jdtls.start_or_attach(config)
+end
+
+return M
