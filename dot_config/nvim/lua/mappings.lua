@@ -54,3 +54,7 @@ map('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
 
 -- Move to the next diagnostic
 map('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+
+local M = {}
+
+return M
