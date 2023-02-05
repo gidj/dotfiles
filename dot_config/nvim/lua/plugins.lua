@@ -38,9 +38,6 @@ require('packer').startup(function()
             -- Java
             { 'mfussenegger/nvim-jdtls' },
         },
-        config = function()
-            require('config/zero')
-        end,
     }
     use 'b3nj5m1n/kommentary'
     use {

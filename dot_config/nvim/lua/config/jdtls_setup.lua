@@ -1,6 +1,5 @@
 local home = os.getenv('HOME')
 local jdtls = require('jdtls')
-local jdtls_setup = require("jdtls.setup")
 local mason_registry = require("mason-registry")
 local install_path = mason_registry.get_package("jdtls"):get_install_path()
 
@@ -16,15 +15,21 @@ local root_dir = require('jdtls.setup').find_root(root_markers)
 local workspace_folder = home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
 os.execute("mkdir " .. workspace_folder)
 
--- Helper function for creating keymaps
-local function nnoremap(rhs, lhs, bufopts, desc)
-    bufopts.desc = desc
-    vim.keymap.set("n", rhs, lhs, bufopts)
+local operating_system
+if vim.fn.has "macunix" then
+    operating_system = "mac"
+elseif vim.fn.has "win32" then
+    operating_system = "win"
+else
+    operating_system = "linux"
 end
 
 -- The on_attach function is used to set key maps after the language server
 -- attaches to the current buffer
 local on_attach = function(client, bufnr)
+    local jdtls = require('jdtls')
+    local jdtls_setup = require('jdtls.setup')
+
     -- Regular Neovim LSP client keymappings
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
     nnoremap('gD', vim.lsp.buf.declaration, bufopts, "Go to declaration")
@@ -57,15 +62,6 @@ local on_attach = function(client, bufnr)
     buf_command(bufnr, 'LspFormat', function()
         vim.lsp.buf.format()
     end, { desc = 'Format buffer with language server' })
-end
-
-local operating_system
-if vim.fn.has "macunix" then
-    operating_system = "mac"
-elseif vim.fn.has "win32" then
-    operating_system = "win"
-else
-    operating_system = "linux"
 end
 
 local config = {

@@ -1,35 +1,10 @@
-local lsp = require('lsp-zero')
+--[[ local lsp_config = require('config/lsp')
 
-lsp.ensure_installed({
-    'gopls',
-    'jdtls',
-    'pyright',
-    'rust_analyzer',
-    'sumneko_lua',
-    'tsserver',
+lsp_zero.setup()
+lsp_zero.set_preferences({
+    set_lsp_keymaps = false,
 })
-
-vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
-
-lsp.preset('lsp-only')
-lsp.skip_server_setup({ "jdtls" })
-lsp.nvim_workspace({
-    library = vim.api.nvim_get_runtime_file('', true)
-})
-
--- nvim-cmp supports additional completion capabilities
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = { "documentation", "detail", "additionalTextEdits" }
-}
-
--- lsp.extend_lspconfig({ capabilities = capabilities })
-lsp.setup_nvim_cmp({
-    capabilities = capabilities
-})
-
-lsp.setup()
+lsp_zero.on_attach(lsp_config.on_attach)
 
 local cmp_setup = require('config/cmp')
-cmp_setup.setup()
+cmp_setup.setup() ]]
