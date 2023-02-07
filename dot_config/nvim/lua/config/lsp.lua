@@ -1,23 +1,56 @@
 local M = {}
 
-local on_attach = function(client, bufnr)
-    local opts = { noremap = true, silent = true }
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-end
-
 -- Helper function for creating keymaps
 local function nnoremap(rhs, lhs, bufopts, desc)
     bufopts.desc = desc
     vim.keymap.set("n", rhs, lhs, bufopts)
 end
 
+local on_attach = function(client, bufnr)
+    local telescope = require('telescope.builtin')
+    -- Regular Neovim LSP client keymappings
+    local bufopts = { noremap = true, silent = true, buffer = bufnr }
+    nnoremap('gD', vim.lsp.buf.type_definition, bufopts, "Go to type definition")
+    nnoremap('gd', telescope.lsp_definitions, bufopts, "Go to definition")
+    nnoremap('gi', telescope.lsp_implementations, bufopts, "Go to implementation")
+    nnoremap('K', vim.lsp.buf.hover, bufopts, "Hover text")
+    nnoremap('<C-k>', vim.lsp.buf.signature_help, bufopts, "Show signature")
+    nnoremap('<leader>rn', vim.lsp.buf.rename, bufopts)
+
+    nnoremap('<leader>ca', vim.lsp.buf.code_action, bufopts, "Code Actions")
+    vim.keymap.set('v', "<leader>ca", "<ESC><CMD>lua vim.lsp.buf.range_code_action()<CR>",
+        { noremap = true, silent = true, buffer = bufnr, desc = "Code actions" })
+
+    nnoremap('<leader>f', function() vim.lsp.buf.format { async = true } end, bufopts, "Format file")
+    nnoremap('<leader>qf', telescope.quickfix, bufopts, "Open quickfix")
+
+    nnoremap('<leader>wl', function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, bufopts, "List workspace folders")
+    nnoremap('<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts, "Add workspace folder")
+    nnoremap('<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts, "Remove workspace folder")
+end
+
+M.on_attach = on_attach
+
+M.on_attach_java = function(client, bufnr)
+    local jdtls = require('jdtls')
+    local jdtls_setup = require('jdtls.setup')
+
+    -- Regular Neovim LSP client keymappings
+    on_attach(client, bufnr)
+
+    local bufopts = { noremap = true, silent = true, buffer = bufnr }
+
+    -- Java extensions provided by jdtls
+    nnoremap("<leader>o", jdtls.organize_imports, bufopts, "Organize imports")
+    nnoremap("<space>ev", jdtls.extract_variable, bufopts, "Extract variable")
+    nnoremap("<space>ec", jdtls.extract_constant, bufopts, "Extract constant")
+    vim.keymap.set('v', "<space>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
+        { noremap = true, silent = true, buffer = bufnr, desc = "Extract method" })
+
+    jdtls_setup.add_commands()
+end
 
 M.setup = function()
     local lsp_zero = require('lsp-zero')
@@ -38,21 +71,19 @@ M.setup = function()
     lsp_zero.nvim_workspace({
         library = vim.api.nvim_get_runtime_file('', true)
     })
+    --[[ local lua_opts = lsp_zero.defaults.nvim_workspace()
+    lua_opts.settings.Lua.completion = { callSnippet = 'Replace' }
+    lua_opts.settings.Lua.library = vim.api.nvim_get_runtime_file('', true)
+    lsp_zero.configure('sumneko_lua', lua_opts) ]]
 
-    --[[ -- This MAY NOT actualy have an effect, because of 'lsp-only'
-    -- nvim-cmp supports additional completion capabilities
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     capabilities.textDocument.completion.completionItem.snippetSupport = true
     capabilities.textDocument.completion.completionItem.resolveSupport = {
         properties = { "documentation", "detail", "additionalTextEdits" }
     }
 
-    -- lsp.extend_lspconfig({ capabilities = capabilities })
-    lsp_zero.setup_nvim_cmp({
-        capabilities = capabilities
-    }) ]]
-
     lsp_zero.set_preferences({
+        capabilities = capabilities,
         set_lsp_keymaps = false,
     })
     lsp_zero.on_attach(on_attach)
@@ -60,53 +91,5 @@ M.setup = function()
 end
 
 M.on_attach = on_attach
-
-M.old = function()
-    -- nvim-cmp supports additional completion capabilities
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
-    capabilities.textDocument.completion.completionItem.snippetSupport = true
-    capabilities.textDocument.completion.completionItem.resolveSupport = {
-        properties = { "documentation", "detail", "additionalTextEdits" }
-    }
-
-    local lspconfig = require("lspconfig")
-    local servers = {
-        "sumneko_lua",
-    }
-
-    for _, lsp in pairs(servers) do
-        local opts = {
-            settings = {},
-            on_attach = on_attach,
-            flags = { debounce_text_changes = 150 },
-            capabilities = capabilities
-        }
-        if lsp == "sumneko_lua" then
-            local runtime_path = vim.split(package.path, ';')
-            table.insert(runtime_path, "lua/?.lua")
-            table.insert(runtime_path, "lua/?/init.lua")
-            local Lua = {
-                runtime = {
-                    -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                    version = 'LuaJIT',
-                    -- Setup your lua path
-                    path = runtime_path
-                },
-                diagnostics = {
-                    -- Get the language server to recognize the `vim` global
-                    globals = { 'vim', 'use' }
-                },
-                workspace = {
-                    -- Make the server aware of Neovim runtime files
-                    library = vim.api.nvim_get_runtime_file("", true)
-                },
-                -- Do not send telemetry data containing a randomized but unique identifier
-                telemetry = { enable = false }
-            }
-            opts.settings.Lua = Lua
-        end
-        lspconfig[lsp].setup(opts)
-    end
-end
 
 return M

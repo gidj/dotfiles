@@ -29,8 +29,6 @@ map("v", ".", ":norm.<CR>")
 -- " Preserve indentation while pasting text from the OS X clipboard
 map("n", "<leader>p", ":set paste<CR>:put  *<CR>:set nopaste<CR>")
 
-map('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>')
-map('n', '<leader>f', '<cmd>lua vim.lsp.buf.format {async = true}<CR>')
 -- " Tab goes switches between matched surrounding tokens
 map("n", "<tab>", "%")
 map("v", "<tab>", "%")
