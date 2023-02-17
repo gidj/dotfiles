@@ -49,6 +49,7 @@ M.on_attach_java = function(client, bufnr)
     vim.keymap.set('v', "<space>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
         { noremap = true, silent = true, buffer = bufnr, desc = "Extract method" })
 
+    jdtls.setup_dap({ hotcodereplace = 'auto' })
     jdtls_setup.add_commands()
 end
 

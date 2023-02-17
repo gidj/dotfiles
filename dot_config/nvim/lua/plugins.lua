@@ -35,8 +35,6 @@ require('packer').startup(function()
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
 
-            -- Java
-            { 'mfussenegger/nvim-jdtls' },
         },
     }
     use 'b3nj5m1n/kommentary'
@@ -49,13 +47,6 @@ require('packer').startup(function()
     }
     use 'ruanyl/vim-gh-line'
     use 'simrat39/symbols-outline.nvim'
-    use {
-        "danymat/neogen",
-        config = function()
-            require('neogen').setup { enabled = true }
-        end,
-        requires = "nvim-treesitter/nvim-treesitter"
-    }
     use 'nvim-lua/popup.nvim'
     use 'justinmk/vim-dirvish'
     use {
@@ -109,4 +100,7 @@ require('packer').startup(function()
             }
         end
     }
+    -- Java
+    use { 'mfussenegger/nvim-jdtls' }
+    use { 'mfussenegger/nvim-dap' }
 end)

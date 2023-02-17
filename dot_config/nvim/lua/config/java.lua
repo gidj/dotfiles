@@ -1,7 +1,10 @@
 local home = os.getenv('HOME')
 local jdtls = require('jdtls')
 local mason_registry = require("mason-registry")
-local install_path = mason_registry.get_package("jdtls"):get_install_path()
+
+local jdtls_path = mason_registry.get_package("jdtls"):get_install_path()
+local java_debug_path = mason_registry.get_package("java-debug-adapter"):get_install_path()
+local java_test_path = mason_registry.get_package("java-test"):get_install_path()
 
 -- File types that signify a Java project's root directory. This will be
 -- used by eclipse to determine what constitutes a workspace
@@ -25,6 +28,12 @@ else
 end
 
 local lsp_config = require('config/lsp')
+
+local bundles = {
+    vim.fn.glob(java_debug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", 1)
+}
+-- This is the new part
+vim.list_extend(bundles, vim.split(vim.fn.glob(java_test_path .. "/extension/server/*.jar", 1), "\n"))
 
 local config = {
     flags = {
@@ -129,14 +138,17 @@ local config = {
 
         -- The jar file is located where jdtls was installed. This will need to be updated
         -- to the location where you installed jdtls
-        '-jar', vim.fn.glob(install_path .. "/plugins/org.eclipse.equinox.launcher_*.jar"),
+        '-jar', vim.fn.glob(jdtls_path .. "/plugins/org.eclipse.equinox.launcher_*.jar"),
 
         -- The configuration for jdtls is also placed where jdtls was installed. This will
         -- need to be updated depending on your environment
-        "-configuration", install_path .. "/config_" .. operating_system,
+        "-configuration", jdtls_path .. "/config_" .. operating_system,
 
         -- Use the workspace_folder defined above to store data for this project
         '-data', workspace_folder,
+    },
+    init_options = {
+        bundles = bundles,
     },
 }
 
