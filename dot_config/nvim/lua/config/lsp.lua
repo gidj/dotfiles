@@ -51,6 +51,7 @@ M.on_attach_java = function(client, bufnr)
 
     jdtls.setup_dap({ hotcodereplace = 'auto' })
     jdtls_setup.add_commands()
+    require("dapui").setup()
 end
 
 M.setup = function()

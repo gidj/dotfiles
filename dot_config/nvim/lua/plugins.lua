@@ -103,4 +103,5 @@ require('packer').startup(function()
     -- Java
     use { 'mfussenegger/nvim-jdtls' }
     use { 'mfussenegger/nvim-dap' }
+    use { "rcarriga/nvim-dap-ui" }
 end)
