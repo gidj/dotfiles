@@ -8,7 +8,7 @@
 #
 # Modules
 #
-
+zmodule joke/zim-rtx
 # Sets sane Zsh built-in environment options.
 zmodule environment
 # Provides handy git aliases and functions.
@@ -21,7 +21,7 @@ zmodule termtitle
 zmodule utility
 # Fzf
 zmodule fzf
-zmodule asdf
+# zmodule asdf
 zmodule exa
 zmodule homebrew
 zmodule kiesman99/zim-zoxide
